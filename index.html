@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Aplicativo Tempo | By Vicenzo Dev</title>
+</head>
+
+<body>
+
+    <div class="caixa">
+        <div class="busca">
+            <input type="texto" placeholder="Digite o nome da cidade">
+            <button><img src="images/search.png"></button>
+        </div>
+        <div class="error">
+            <p>Nome Inválido</p>
+        </div>
+        <div class="tempo">
+            <img src="images/rain.png" class="tempo-icone">
+            <h1 class="temperatura">22°c</h1>
+            <h2 class="cidade">Nova Iorque</h2>
+            <div class="detalhes">
+                <div class="coluna">
+                    <img src="images/humidity.png">
+                    <div>
+                        <p class="umidade">50%</p>
+                        <p>Umidade</p>
+                    </div>
+                </div>
+                <div class="coluna">
+                    <img src="images/wind.png">
+                    <div>
+                        <p class="vento">15 km/h</p>
+                        <p>Vento</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <script>
+
+        const apiKey = "903b8ec240f6d67777a3c9d6a27b42ef"; // Insira sua chave de API aqui
+        const apiUrl = "https://api.openweathermap.org/data/2.5/weather?units=metric&q="; // Insira a URL da API aqui
+
+        const searchBox = document.querySelector(".busca input");
+        const searchBtn = document.querySelector(".busca button");
+        const weatherIcon = document.querySelector(".tempo-icone");
+
+        async function checarTempo(cidade) {
+            const response = await fetch(apiUrl + cidade + `&appid=${apiKey}`);
+
+            if (response.status == 404) {
+                document.querySelector(".error").style.display = "block";
+                document.querySelector(".tempo").style.display = "none";
+                return;
+            } else {
+                var data = await response.json();
+
+                document.querySelector(".cidade").innerHTML = data.name;
+                document.querySelector(".temperatura").innerHTML = Math.round(data.main.temp) + "°c";
+                document.querySelector(".umidade").innerHTML = data.main.humidity + "%";
+                document.querySelector(".vento").innerHTML = data.wind.speed + " km/h";
+
+                if (data.weather[0].main == "Clouds") {
+                    weatherIcon.src = "images/clouds.png";
+                }
+                else if (data.weather[0].main == "Clear") {
+                    weatherIcon.src = "images/clear.png";
+                }
+                else if (data.weather[0].main == "Rain") {
+                    weatherIcon.src = "images/rain.png";
+                }
+                else if (data.weather[0].main == "Drizzle") {
+                    weatherIcon.src = "images/drizzle.png";
+                }
+                else if (data.weather[0].main == "Mist") {
+                    weatherIcon.src = "images/mist.png";
+                }
+                else if (data.weather[0].main == "Snow") {
+                    weatherIcon.src = "images/snow.png";
+                }
+
+                document.querySelector(".tempo").style.display = "block";
+                document.querySelector(".error").style.display = "none";
+            }
+
+
+        }
+        searchBtn.addEventListener("click", () => {
+            checarTempo(searchBox.value);
+        });
+        searchBox.addEventListener("keyup", (event) => {
+            if (event.key === "Enter") {
+                checarTempo(searchBox.value);
+            }
+        });
+
+
+
+
+    </script>
+</body>
+
+</html>
